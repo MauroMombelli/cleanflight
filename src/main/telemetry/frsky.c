@@ -166,7 +166,7 @@ static void sendAccel(void)
 
     for (i = 0; i < 3; i++) {
         sendDataHead(ID_ACC_X + i);
-        serialize16(((float)accSmooth[i] / acc_1G) * 1000);
+        serialize16(((float)accADC[i] / acc_1G) * 1000);
     }
 }
 
@@ -432,7 +432,7 @@ static void sendFuelLevel(void)
 static void sendHeading(void)
 {
     sendDataHead(ID_COURSE_BP);
-    serialize16(heading);
+    serialize16(DECIDEGREES_TO_DEGREES(inclinationDecigrees[YAW]));
     sendDataHead(ID_COURSE_AP);
     serialize16(0);
 }

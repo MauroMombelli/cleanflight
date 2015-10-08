@@ -471,8 +471,6 @@ static void resetConf(void)
     currentProfile->mag_declination = 0;
     currentProfile->acc_lpf_factor = 4;
     currentProfile->accz_lpf_cutoff = 5.0f;
-    currentProfile->accDeadband.xy = 40;
-    currentProfile->accDeadband.z = 40;
 
     resetBarometerConfig(&currentProfile->barometerConfig);
 
@@ -665,7 +663,6 @@ void activateControlRateConfig(void)
 
 void activateConfig(void)
 {
-    static imuRuntimeConfig_t imuRuntimeConfig;
 
     activateControlRateConfig();
 
@@ -705,17 +702,7 @@ void activateConfig(void)
         &masterConfig.rxConfig
     );
 
-    imuRuntimeConfig.gyro_cmpf_factor = masterConfig.gyro_cmpf_factor;
-    imuRuntimeConfig.gyro_cmpfm_factor = masterConfig.gyro_cmpfm_factor;
-    imuRuntimeConfig.acc_lpf_factor = currentProfile->acc_lpf_factor;
-    imuRuntimeConfig.acc_unarmedcal = currentProfile->acc_unarmedcal;;
-    imuRuntimeConfig.small_angle = masterConfig.small_angle;
-
     imuConfigure(
-        &imuRuntimeConfig,
-        &currentProfile->pidProfile,
-        &currentProfile->accDeadband,
-        currentProfile->accz_lpf_cutoff,
         currentProfile->throttle_correction_angle
     );
 

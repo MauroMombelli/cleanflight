@@ -459,7 +459,7 @@ void showSensorsPage(void)
     i2c_OLED_send_string("        X     Y     Z");
 
     if (sensors(SENSOR_ACC)) {
-        tfp_sprintf(lineBuffer, format, "ACC", accSmooth[X], accSmooth[Y], accSmooth[Z]);
+        tfp_sprintf(lineBuffer, format, "ACC", accADC[X], accADC[Y], accADC[Z]);
         padLineBuffer();
         i2c_OLED_set_line(rowIndex++);
         i2c_OLED_send_string(lineBuffer);
@@ -481,25 +481,25 @@ void showSensorsPage(void)
     }
 #endif
 
-    tfp_sprintf(lineBuffer, format, "I&H", inclination.values.rollDeciDegrees, inclination.values.pitchDeciDegrees, heading);
+    tfp_sprintf(lineBuffer, format, "I&H", inclinationDecigrees[ROLL], inclinationDecigrees[PITCH], inclinationDecigrees[YAW]);
     padLineBuffer();
     i2c_OLED_set_line(rowIndex++);
     i2c_OLED_send_string(lineBuffer);
 
     uint8_t length;
 
-    ftoa(EstG.A[X], lineBuffer);
+    ftoa(EstG[ROLL], lineBuffer);
     length = strlen(lineBuffer);
     while (length < HALF_SCREEN_CHARACTER_COLUMN_COUNT) {
         lineBuffer[length++] = ' ';
         lineBuffer[length+1] = 0;
     }
-    ftoa(EstG.A[Y], lineBuffer + length);
+    ftoa(EstG[PITCH], lineBuffer + length);
     padLineBuffer();
     i2c_OLED_set_line(rowIndex++);
     i2c_OLED_send_string(lineBuffer);
 
-    ftoa(EstG.A[Z], lineBuffer);
+    ftoa(EstG[YAW], lineBuffer);
     length = strlen(lineBuffer);
     while (length < HALF_SCREEN_CHARACTER_COLUMN_COUNT) {
         lineBuffer[length++] = ' ';

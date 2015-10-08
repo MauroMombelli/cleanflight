@@ -223,7 +223,7 @@ static void updateTargetAngle(void)
 #endif
 }
 
-float autotune(angle_index_t angleIndex, const rollAndPitchInclination_t *inclination, float errorAngle)
+float autotune(angle_index_t angleIndex, const int16_t * const inclination, float errorAngle)
 {
     float currentAngle;
     bool overshot;
@@ -240,16 +240,16 @@ float autotune(angle_index_t angleIndex, const rollAndPitchInclination_t *inclin
 
 #ifdef DEBUG_AUTOTUNE
     debug[0] = 0;
-    debug[1] = inclination->rawAngles[angleIndex];
+    debug[1] = inclination[angleIndex];
 #endif
 
     updatePidIndex();
 
     if (rising) {
-        currentAngle = DECIDEGREES_TO_DEGREES(inclination->raw[angleIndex]);
+        currentAngle = DECIDEGREES_TO_DEGREES(inclination[angleIndex]);
     } else {
         targetAngle = -targetAngle;
-        currentAngle = DECIDEGREES_TO_DEGREES(-inclination->raw[angleIndex]);
+        currentAngle = DECIDEGREES_TO_DEGREES(-inclination[angleIndex]);
     }
 
 #ifdef DEBUG_AUTOTUNE
@@ -407,7 +407,7 @@ float autotune(angle_index_t angleIndex, const rollAndPitchInclination_t *inclin
 
     updateTargetAngle();
 
-    return targetAngle - DECIDEGREES_TO_DEGREES(inclination->raw[angleIndex]);
+    return targetAngle - DECIDEGREES_TO_DEGREES(inclination[angleIndex]);
 }
 
 void autotuneReset(void)

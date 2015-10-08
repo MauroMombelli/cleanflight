@@ -917,7 +917,7 @@ static void loadMainState(void)
     }
 
     for (i = 0; i < XYZ_AXIS_COUNT; i++) {
-        blackboxCurrent->accSmooth[i] = accSmooth[i];
+        blackboxCurrent->accSmooth[i] = accADC[i];
     }
 
     for (i = 0; i < motorCount; i++) {

@@ -80,7 +80,6 @@ int16_t rcCommand[4];
 int16_t rcData[MAX_SUPPORTED_RC_CHANNEL_COUNT];
 
 uint16_t acc_1G;
-int16_t heading;
 gyro_t gyro;
 int16_t magADC[XYZ_AXIS_COUNT];
 int32_t BaroAlt;

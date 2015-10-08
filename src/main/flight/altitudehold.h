@@ -30,3 +30,4 @@ void updateAltHoldState(void);
 void updateSonarAltHoldState(void);
 
 int32_t altitudeHoldGetEstimatedAltitude(void);
+void calculateEstimatedAltitude(uint32_t currentTime);

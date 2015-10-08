@@ -168,9 +168,9 @@ void updateSonarAltHoldState(void)
     }
 }
 
-bool isThrustFacingDownwards(rollAndPitchInclination_t *inclination)
+bool isThrustFacingDownwards(const int16_t * const inclinationDecigrees)
 {
-    return ABS(inclination->values.rollDeciDegrees) < DEGREES_80_IN_DECIDEGREES && ABS(inclination->values.pitchDeciDegrees) < DEGREES_80_IN_DECIDEGREES;
+    return ABS(inclinationDecigrees[ROLL]) < DEGREES_80_IN_DECIDEGREES && ABS(inclinationDecigrees[PITCH]) < DEGREES_80_IN_DECIDEGREES;
 }
 
 /*
@@ -178,9 +178,9 @@ bool isThrustFacingDownwards(rollAndPitchInclination_t *inclination)
 * //TODO: Fix this up. We could either actually return the angle between 'down' and the normal of the craft
 * (my best interpretation of scalar 'tiltAngle') or rename the function.
 */
-int16_t calculateTiltAngle(rollAndPitchInclination_t *inclination)
+int16_t calculateTiltAngle(const int16_t * const inclinationDecigreees)
 {
-    return MAX(ABS(inclination->values.rollDeciDegrees), ABS(inclination->values.pitchDeciDegrees));
+    return MAX(ABS(inclinationDecigreees[ROLL]), ABS(inclinationDecigreees[PITCH]));
 }
 
 int32_t calculateAltHoldThrottleAdjustment(int32_t vel_tmp, float accZ_tmp, float accZ_old)
@@ -189,7 +189,7 @@ int32_t calculateAltHoldThrottleAdjustment(int32_t vel_tmp, float accZ_tmp, floa
     int32_t error;
     int32_t setVel;
 
-    if (!isThrustFacingDownwards(&inclination)) {
+    if (!isThrustFacingDownwards(inclinationDecigrees)) {
         return result;
     }
 
@@ -260,7 +260,7 @@ void calculateEstimatedAltitude(uint32_t currentTime)
 #endif
 
 #ifdef SONAR
-    tiltAngle = calculateTiltAngle(&inclination);
+    tiltAngle = calculateTiltAngle(inclinationDecigrees);
     sonarAlt = sonarRead();
     sonarAlt = sonarCalculateAltitude(sonarAlt, tiltAngle);
 #endif
@@ -276,6 +276,8 @@ void calculateEstimatedAltitude(uint32_t currentTime)
         }
     }
 
+    /*TODO: FIX THAT MAURO!!
+
     dt = accTimeSum * 1e-6f; // delta acc reading time in seconds
 
     // Integrator - velocity, cm/sec
@@ -285,7 +287,7 @@ void calculateEstimatedAltitude(uint32_t currentTime)
         accZ_tmp = 0;
     }
     vel_acc = accZ_tmp * accVelScale * (float)accTimeSum;
-
+     */
     // Integrator - Altitude in cm
     accAlt += (vel_acc * 0.5f) * dt + vel * dt;                                                                 // integrate velocity to get distance (x= a/2 * t^2)
     accAlt = accAlt * barometerConfig->baro_cf_alt + (float)BaroAlt * (1.0f - barometerConfig->baro_cf_alt);    // complementary filter for altitude estimation (baro & acc)
@@ -297,7 +299,9 @@ void calculateEstimatedAltitude(uint32_t currentTime)
     debug[3] = accAlt;                  // height
 #endif
 
+    /*TODO: FIX THAT MAURO!!
     imuResetAccelerationSum();
+     */
 
 #ifdef BARO
     if (!isBaroCalibrationComplete()) {

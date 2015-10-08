@@ -710,7 +710,6 @@ void GPS_reset_home_position(void) {}
 void baroSetCalibrationCycles(uint16_t) {}
 
 uint8_t armingFlags = 0;
-int16_t heading;
 uint8_t stateFlags = 0;
 int16_t rcData[MAX_SUPPORTED_RC_CHANNEL_COUNT];
 rxRuntimeConfig_t rxRuntimeConfig;

@@ -17,18 +17,18 @@
 
 #pragma once
 
+int16_t inclinationDecigrees[XYZ_AXIS_COUNT];
+int16_t EstG[XYZ_AXIS_COUNT];
+int16_t smallAngle;
+
 void imuInit(void);
 
-void imuConfigure(
-    imuRuntimeConfig_t *initialImuRuntimeConfig,
-    pidProfile_t *initialPidProfile,
-    accDeadband_t *initialAccDeadband,
-    float accz_lpf_cutoff,
-    uint16_t throttle_correction_angle
-);
+void imuConfigure(uint16_t throttle_correction_angle);
 
-void imuResetAccelerationSum(void);
+//void imuResetAccelerationSum(void);
 
-void imuUpdate(rollAndPitchTrims_t *accelerometerTrims);
+void imuUpdate();
+
+/*TODO: what are those two function doing here?! */
 
 int16_t calculateThrottleAngleCorrection(uint8_t throttle_correction_value);

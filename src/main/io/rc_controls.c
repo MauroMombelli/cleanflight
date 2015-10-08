@@ -51,6 +51,7 @@
 
 #include "io/display.h"
 
+#include "flight/imu.h"
 #include "flight/pid.h"
 #include "flight/navigation.h"
 #include "flight/failsafe.h"
@@ -217,7 +218,7 @@ void processRcStickPositions(rxConfig_t *rxConfig, throttleStatus_e throttleStat
 #endif
 
         if (!sensors(SENSOR_MAG))
-            heading = 0; // reset heading to zero after gyro calibration
+            inclinationDecigrees[YAW] = 0; // reset heading to zero after gyro calibration
 
         return;
     }
