@@ -74,6 +74,11 @@ void mahonyAHRSupdate(float gx, float gy, float gz, float ax, float ay, float az
         bx = sqrtf(hx * hx + hy * hy);
         bz = 2.0f * (mx * (q1q3 - q0q2) + my * (q2q3 + q0q1) + mz * (0.5f - q1q1 - q2q2));
 
+        // Estimated direction of magnetic field
+        halfwx = bx * (0.5f - q2q2 - q3q3) + bz * (q1q3 - q0q2);
+        halfwy = bx * (q1q2 - q0q3) + bz * (q0q1 + q2q3);
+        halfwz = bx * (q0q2 + q1q3) + bz * (0.5f - q1q1 - q2q2);
+
         halfex += (my * halfwz - mz * halfwy);
         halfey += (mz * halfwx - mx * halfwz);
         halfez += (mx * halfwy - my * halfwx);
@@ -88,13 +93,10 @@ void mahonyAHRSupdate(float gx, float gy, float gz, float ax, float ay, float az
         ay *= recipNorm;
         az *= recipNorm;
 
-        // Estimated direction of gravity and magnetic field
+        // Estimated direction of gravity
         halfvx = q1q3 - q0q2;
         halfvy = q0q1 + q2q3;
         halfvz = q0q0 - 0.5f + q3q3;
-        halfwx = bx * (0.5f - q2q2 - q3q3) + bz * (q1q3 - q0q2);
-        halfwy = bx * (q1q2 - q0q3) + bz * (q0q1 + q2q3);
-        halfwz = bx * (q0q2 + q1q3) + bz * (0.5f - q1q1 - q2q2);
 
         // Error is sum of cross product between estimated direction and measured direction of field vectors
         halfex += (ay * halfvz - az * halfvy);
