@@ -25,7 +25,9 @@
 
 float q0 = 1.0f, q1 = 0.0f, q2 = 0.0f, q3 = 0.0f;
 float integralFBx = 0.0f,  integralFBy = 0.0f, integralFBz = 0.0f;
-float sampleFreq = 100;
+
+float loopTimeSec = 0;
+
 float twoKp = (2.0f * 0.5f);
 float twoKi = (2.0f * 0.1625f);
 
@@ -99,31 +101,31 @@ void mahonyAHRSupdate(float gx, float gy, float gz, float ax, float ay, float az
         halfey += (az * halfvx - ax * halfvz);
         halfez += (ax * halfvy - ay * halfvx);
 
-        // Compute and apply integral feedback if enabled
-        if(twoKi > 0.0f) {
-            integralFBx += twoKi * halfex * (1.0f / sampleFreq);    // integral error scaled by Ki
-            integralFBy += twoKi * halfey * (1.0f / sampleFreq);
-            integralFBz += twoKi * halfez * (1.0f / sampleFreq);
-            gx += integralFBx;  // apply integral feedback
-            gy += integralFBy;
-            gz += integralFBz;
-        }
-        else {
-            integralFBx = 0.0f; // prevent integral windup
-            integralFBy = 0.0f;
-            integralFBz = 0.0f;
-        }
-
-        // Apply proportional feedback
-        gx += twoKp * halfex;
-        gy += twoKp * halfey;
-        gz += twoKp * halfez;
+    }
+    
+    // Compute and apply integral feedback if enabled
+    if(twoKi > 0.0f) {
+        integralFBx += twoKi * halfex * loopTimeSec;    // integral error scaled by Ki
+        integralFBy += twoKi * halfey * loopTimeSec;
+        integralFBz += twoKi * halfez * loopTimeSec;
+        gx += integralFBx;  // apply integral feedback
+        gy += integralFBy;
+        gz += integralFBz;
+    } else {
+        integralFBx = 0.0f; // prevent integral windup
+        integralFBy = 0.0f;
+        integralFBz = 0.0f;
     }
 
+    // Apply proportional feedback
+    gx += twoKp * halfex;
+    gy += twoKp * halfey;
+    gz += twoKp * halfez;
+
     // Integrate rate of change of quaternion
-    gx *= (0.5f * (1.0f / sampleFreq));     // pre-multiply common factors
-    gy *= (0.5f * (1.0f / sampleFreq));
-    gz *= (0.5f * (1.0f / sampleFreq));
+    gx *= (0.5f * loopTimeSec);     // pre-multiply common factors
+    gy *= (0.5f * loopTimeSec);
+    gz *= (0.5f * loopTimeSec);
     qa = q0;
     qb = q1;
     qc = q2;
@@ -177,9 +179,11 @@ void imuUpdate(){
     uint32_t deltaT;
     deltaT = currentT - previousT;
 
-    sampleFreq = 1000.0f/deltaT /2; //from ms to Hz
+    loopTimeSec = deltaT/1000000.0f;
 
     mahonyAHRSupdate(gyroADC[X] * gyroScaleRad, gyroADC[Y] * gyroScaleRad, gyroADC[Z] * gyroScaleRad, accADC[X], accADC[Y], accADC[Z], magADC[X], magADC[Y], magADC[Z]);
+    
+    /* TODO: assing results to proper shared variable */
 }
 
 
